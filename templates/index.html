@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Brainora AI – Learn Smarter, Grow Faster</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+<style>
+:root{
+  --bg:#f4f5f9;--surface:#fff;--border:#e8eaf0;
+  --text:#1a1d2e;--muted:#6b7280;
+  --pri:#5b5ef4;--pri-dark:#4547d4;--pri-light:#eeeffe;
+  --ok:#22c55e;--ok-light:#dcfce7;
+  --warn:#f59e0b;--warn-light:#fef9c3;
+  --err:#ef4444;--err-light:#fee2e2;
+  --purple:#7c5cbf;--purple-light:#f3eeff;
+  --sidebar-w:220px;
+  --r:12px;--sh:0 2px 12px rgba(0,0,0,.07);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+input,textarea,select{font-family:inherit}
+
+/* ── Sidebar ── */
+.sidebar{
+  width:var(--sidebar-w);min-width:var(--sidebar-w);
+  background:#1a1d2e;color:#fff;
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;z-index:100;
+  overflow-y:auto;
+}
+.sidebar-logo{padding:1.2rem 1.1rem .8rem;display:flex;align-items:center;gap:.6rem}
+.sidebar-logo .logo-icon{width:36px;height:36px;background:var(--pri);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.sidebar-logo .logo-text{font-weight:800;font-size:.95rem;line-height:1.2}
+.sidebar-logo .logo-sub{font-size:.7rem;color:#9ca3af}
+.sidebar-section{padding:.4rem .8rem .2rem;font-size:.65rem;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-top:.4rem}
+.nav-item{display:flex;align-items:center;gap:.7rem;padding:.55rem .9rem;border-radius:9px;margin:.08rem .5rem;font-size:.85rem;font-weight:500;color:#cbd5e1;cursor:pointer;transition:all .15s;position:relative}
+.nav-item:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav-item.active{background:var(--pri);color:#fff;font-weight:700}
+.nav-item .nav-badge{margin-left:auto;background:var(--err);color:#fff;border-radius:20px;font-size:.62rem;font-weight:800;padding:1px 6px}
+.nav-item .nav-ai{margin-left:auto;background:var(--pri);color:#fff;border-radius:6px;font-size:.6rem;font-weight:800;padding:1px 5px}
+.sidebar-bottom{margin-top:auto;padding:.8rem .5rem}
+.secure-box{background:rgba(255,255,255,.07);border-radius:10px;padding:.7rem .9rem;display:flex;align-items:center;gap:.6rem;font-size:.78rem;color:#94a3b8}
+.secure-box .fp-icon{width:28px;height:28px;background:rgba(255,255,255,.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+
+/* ── Main ── */
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;min-width:0;overflow-x:hidden}
+
+/* ── Topbar ── */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:.7rem 1.5rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:90}
+.search-box{flex:1;max-width:440px;display:flex;align-items:center;gap:.5rem;background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:.45rem .9rem}
+.search-box input{background:none;border:none;outline:none;font-size:.88rem;width:100%;color:var(--text)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:.9rem}
+.notif-btn{background:none;border:none;cursor:pointer;font-size:1.15rem;color:var(--muted);position:relative}
+.user-info{display:flex;align-items:center;gap:.6rem;cursor:pointer}
+.user-avatar{width:34px;height:34px;background:linear-gradient(135deg,var(--pri),var(--purple));border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.85rem}
+.user-name{font-size:.85rem;font-weight:700}
+.user-role{font-size:.72rem;color:var(--muted)}
+
+/* ── Content area ── */
+.content{padding:1.4rem 1.5rem;flex:1;min-width:0;overflow-x:hidden}
+.section{display:none}.section.active{display:block}
+
+/* ── Page titles ── */
+.page-title{font-size:1.25rem;font-weight:800;margin-bottom:.25rem}
+.page-sub{font-size:.85rem;color:var(--muted);margin-bottom:1.2rem}
+
+/* ── Cards ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);padding:1.2rem}
+.card-title{font-size:.82rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.7rem}
+
+/* ── Stat cards ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.2rem}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);padding:1.1rem 1.2rem}
+.stat-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:.6rem}
+.stat-val{font-size:1.5rem;font-weight:900;line-height:1}
+.stat-label{font-size:.75rem;color:var(--muted);margin-top:.15rem}
+.stat-sub{font-size:.75rem;margin-top:.25rem;font-weight:600}
+
+/* ── Dashboard grid ── */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.dash-grid.three{grid-template-columns:repeat(3,1fr)}
+@media(max-width:1100px){.dash-grid.three{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.stats-row{grid-template-columns:repeat(2,1fr)}.dash-grid,.dash-grid.three{grid-template-columns:1fr}}
+
+/* ── Right panel ── */
+.layout-with-panel{display:grid;grid-template-columns:1fr 320px;gap:1rem}
+.right-panel{display:flex;flex-direction:column;gap:1rem}
+@media(max-width:1100px){.layout-with-panel{grid-template-columns:1fr}}
+
+/* ── Coach card ── */
+.coach-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);padding:1.2rem}
+.coach-header{display:flex;align-items:center;gap:.6rem;margin-bottom:.4rem}
+.coach-icon{width:36px;height:36px;background:var(--pri-light);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--pri)}
+.coach-action{background:linear-gradient(135deg,var(--pri-light),#f0f0ff);border:1px solid var(--border);border-radius:10px;padding:1rem;margin:.8rem 0}
+.coach-steps{counter-reset:step;display:flex;flex-direction:column;gap:.45rem}
+.coach-step{display:flex;align-items:flex-start;gap:.6rem;font-size:.82rem;color:var(--muted)}
+.coach-step::before{counter-increment:step;content:counter(step);width:20px;height:20px;min-width:20px;background:var(--pri);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800}
+
+/* ── Topic mastery donut (SVG) ── */
+.donut-wrap{display:flex;align-items:center;gap:1.2rem}
+.donut-svg{flex-shrink:0}
+.donut-legend{display:flex;flex-direction:column;gap:.4rem}
+.legend-row{display:flex;align-items:center;gap:.5rem;font-size:.8rem}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+/* ── Recent activity ── */
+.activity-row{display:flex;align-items:center;gap:.7rem;padding:.6rem 0;border-bottom:1px solid var(--border)}
+.activity-row:last-child{border-bottom:none}
+.act-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.act-title{font-size:.85rem;font-weight:600}
+.act-detail{font-size:.75rem;color:var(--muted)}
+.act-time{margin-left:auto;font-size:.72rem;color:var(--muted)}
+.act-tag{font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:20px;flex-shrink:0}
+.tag-weak{background:#fee2e2;color:#991b1b}
+.tag-strong{background:var(--ok-light);color:#166534}
+.tag-proc{background:#dbeafe;color:#1e40af}
+.tag-upd{background:var(--pri-light);color:var(--pri)}
+
+/* ── Revision plan rows ── */
+.rev-row{display:flex;align-items:center;gap:.7rem;padding:.55rem 0;border-bottom:1px solid var(--border);font-size:.83rem}
+.rev-row:last-child{border-bottom:none}
+.rev-checkbox{width:17px;height:17px;border:2px solid var(--border);border-radius:5px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.rev-checkbox.done{background:var(--ok);border-color:var(--ok);color:#fff}
+.rev-topic{font-weight:600;flex:1}
+.rev-due{font-size:.75rem;color:var(--muted)}
+.rev-status{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:20px}
+.s-done{background:var(--ok-light);color:#166534}
+.s-pending{background:var(--warn-light);color:#854d0e}
+.s-overdue{background:var(--err-light);color:#991b1b}
+
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.55rem 1.1rem;border-radius:9px;font-weight:700;font-size:.85rem;cursor:pointer;border:none;transition:all .18s}
+.btn-pri{background:var(--pri);color:#fff}.btn-pri:hover{background:var(--pri-dark);transform:translateY(-1px)}
+.btn-ok{background:var(--ok);color:#fff}
+.btn-out{background:transparent;color:var(--pri);border:1.5px solid var(--pri)}.btn-out:hover{background:var(--pri);color:#fff}
+.btn-ghost{background:var(--bg);color:var(--text);border:1px solid var(--border)}.btn-ghost:hover{background:var(--border)}
+.btn-sm{padding:.35rem .8rem;font-size:.78rem;border-radius:7px}
+.btn-full{width:100%;justify-content:center}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+.spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:rot .65s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* ── Upload zone ── */
+.drop-zone{display:block;border:2px dashed var(--pri);border-radius:12px;padding:2rem 1.5rem;text-align:center;cursor:pointer;background:var(--pri-light);transition:all .2s;user-select:none}
+.drop-zone:hover,.drop-zone.over{background:#e0e1ff;border-color:var(--pri-dark)}
+.drop-zone input{display:none}
+
+/* ── Quiz ── */
+.quiz-q{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.2rem;margin-bottom:.9rem;border-left:4px solid var(--pri);overflow:hidden}
+.quiz-q.done{border-left-color:var(--ok)}
+.quiz-meta{font-size:.72rem;font-weight:700;color:var(--pri);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.3rem}
+.quiz-text{font-size:.97rem;font-weight:700;margin-bottom:.8rem;line-height:1.5;word-break:break-word;overflow-wrap:anywhere}
+.quiz-opts{display:flex;flex-direction:column;gap:.4rem}
+.quiz-opt{display:flex;align-items:center;gap:.6rem;padding:.6rem .9rem;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;transition:all .15s;background:var(--bg);font-size:.88rem;word-break:break-word;overflow-wrap:anywhere}
+.quiz-opt:hover{border-color:var(--pri);background:var(--pri-light)}
+.quiz-opt.sel{border-color:var(--pri);background:var(--pri-light);font-weight:700}
+.quiz-opt.c-ok{background:var(--ok-light)!important;border-color:var(--ok)!important}
+.quiz-opt.c-err{background:var(--err-light)!important;border-color:var(--err)!important}
+.opt-lbl{width:26px;height:26px;min-width:26px;background:var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.78rem}
+.quiz-opt.sel .opt-lbl{background:var(--pri);color:#fff}
+.timer-badge{background:var(--pri);color:#fff;border-radius:6px;padding:2px 8px;font-weight:800;font-size:.78rem}
+.timer-badge.warn{background:var(--warn)}
+.timer-badge.hot{background:var(--err);animation:blink .5s infinite alternate}
+@keyframes blink{to{opacity:.5}}
+.hint-box{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:.6rem .9rem;font-size:.8rem;color:#92400e;margin-top:.6rem;display:none}
+.hint-btn{background:none;border:1px solid var(--warn);color:var(--warn);border-radius:6px;padding:2px 7px;font-size:.7rem;cursor:pointer;font-weight:700}
+.prog-bar-bg{background:var(--border);border-radius:8px;height:7px;overflow:hidden;margin-bottom:.3rem}
+.prog-bar{height:100%;background:linear-gradient(90deg,var(--pri),var(--purple));border-radius:8px;transition:width .4s}
+
+/* ── Score hero ── */
+.score-hero{background:linear-gradient(135deg,var(--pri),var(--purple));color:#fff;border-radius:16px;padding:2rem;text-align:center;margin-bottom:1rem}
+.score-big{font-size:3.5rem;font-weight:900;line-height:1}
+.score-pct{font-size:1.6rem;font-weight:800;opacity:.9}
+
+/* ── Flashcards ── */
+.flashcard{perspective:600px;height:160px;cursor:pointer}
+.flashcard-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flashcard.flipped .flashcard-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem;text-align:center;font-size:.88rem;font-weight:600;border:1px solid var(--border)}
+.fc-front{background:var(--surface)}
+.fc-back{background:var(--pri-light);transform:rotateY(180deg);color:var(--pri)}
+.fc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem}
+@media(max-width:700px){.fc-grid{grid-template-columns:1fr}}
+
+/* ── Tutor ── */
+.tutor-panel{display:flex;flex-direction:column;gap:.6rem;max-height:400px;overflow-y:auto;padding:.2rem .1rem;margin-bottom:.7rem}
+.msg{display:flex;gap:.6rem;align-items:flex-start}
+.msg-bot .msg-bubble{background:var(--bg);border:1px solid var(--border)}
+.msg-user .msg-bubble{background:var(--pri);color:#fff;margin-left:auto}
+.msg-bubble{padding:.7rem .9rem;border-radius:10px;font-size:.85rem;line-height:1.5;max-width:85%}
+.msg-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;flex-shrink:0}
+.tutor-input-row{display:flex;gap:.5rem}
+.tutor-input{flex:1;padding:.6rem .9rem;border:1.5px solid var(--border);border-radius:9px;font-size:.88rem;outline:none;background:var(--bg)}
+.tutor-input:focus{border-color:var(--pri)}
+.source-cite{background:var(--pri-light);border:1px solid var(--pri);border-radius:7px;padding:.4rem .7rem;font-size:.75rem;color:var(--pri);margin-top:.4rem}
+
+/* ── Analytics ── */
+.analytics-bar{display:flex;align-items:center;gap:.8rem;margin-bottom:.7rem}
+.analytics-bar .label{font-size:.82rem;font-weight:600;min-width:120px}
+.analytics-bar .bar-track{flex:1;background:var(--border);border-radius:8px;height:9px;overflow:hidden}
+.analytics-bar .bar-fill{height:100%;border-radius:8px;transition:width 1s ease;width:0}
+.analytics-bar .pct{font-size:.78rem;color:var(--muted);min-width:36px;text-align:right}
+
+/* ── Misc ── */
+.pill{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.72rem;font-weight:700}
+.pill-pri{background:var(--pri-light);color:var(--pri)}
+.pill-ok{background:var(--ok-light);color:#166534}
+.pill-warn{background:var(--warn-light);color:#854d0e}
+.pill-err{background:var(--err-light);color:#991b1b}
+.divider{border:none;border-top:1px solid var(--border);margin:.8rem 0}
+.muted{color:var(--muted);font-size:.83rem}
+.fw{font-weight:700}
+.mt1{margin-top:.5rem}.mt2{margin-top:1rem}
+.flex{display:flex;align-items:center}.gap1{gap:.5rem}.gap2{gap:1rem}
+.view-all{font-size:.78rem;color:var(--pri);font-weight:700;cursor:pointer}
+.empty-state{text-align:center;padding:2rem 1rem;color:var(--muted)}
+.empty-state i{font-size:2rem;display:block;margin-bottom:.5rem}
+.alert-box{border-radius:9px;padding:.7rem 1rem;margin-bottom:.8rem;font-size:.85rem;font-weight:600}
+.alert-err{background:var(--err-light);color:#991b1b}
+.alert-ok{background:var(--ok-light);color:#166534}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><i class="bi bi-brain"></i></div>
+    <div><div class="logo-text">Brainora AI</div><div class="logo-sub">Learn Smarter, Grow Faster</div></div>
+  </div>
+
+  <nav>
+    <div class="sidebar-section">Main</div>
+    <div class="nav-item active" data-section="dashboard"><i class="bi bi-grid-fill"></i>Dashboard</div>
+    <div class="nav-item" data-section="upload"><i class="bi bi-cloud-upload-fill"></i>Upload PDF</div>
+    <div class="nav-item" data-section="quizzes"><i class="bi bi-patch-question-fill"></i>My Quizzes</div>
+
+    <div class="sidebar-section">AI Features</div>
+    <div class="nav-item" data-section="coach"><i class="bi bi-robot"></i>Study Coach<span class="nav-ai">AI</span></div>
+    <div class="nav-item" data-section="tutor"><i class="bi bi-chat-dots-fill"></i>AI Tutor</div>
+    <div class="nav-item" data-section="flashcards"><i class="bi bi-card-text"></i>Flashcards</div>
+
+    <div class="sidebar-section">Planning</div>
+    <div class="nav-item" data-section="revision"><i class="bi bi-calendar3"></i>Revision Plan</div>
+    <div class="nav-item" data-section="analytics"><i class="bi bi-bar-chart-line-fill"></i>Progress & Analytics</div>
+
+    <div class="sidebar-section">More</div>
+    <div class="nav-item" data-section="files"><i class="bi bi-folder-fill"></i>My Files</div>
+    <div class="nav-item" data-section="settings"><i class="bi bi-gear-fill"></i>Settings</div>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <div class="secure-box">
+      <div class="fp-icon"><i class="bi bi-shield-lock-fill"></i></div>
+      <div><div style="font-weight:700;font-size:.75rem">Secure Account</div><div style="font-size:.65rem;color:#6b7280">Passkey Authentication</div></div>
+      <i class="bi bi-fingerprint" style="margin-left:auto;font-size:1.1rem;color:#6b7280"></i>
+    </div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="search-box">
+      <i class="bi bi-search" style="color:var(--muted)"></i>
+      <input type="text" placeholder="Search topics, notes, or ask a question…" id="globalSearch"/>
+    </div>
+    <div class="topbar-right">
+      <button class="notif-btn" title="Notifications"><i class="bi bi-bell-fill"></i></button>
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatar">A</div>
+        <div><div class="user-name" id="userName">Student</div><div class="user-role">Student</div></div>
+        <i class="bi bi-chevron-down" style="color:var(--muted);font-size:.75rem;margin-left:.3rem"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <div class="section active" id="s-dashboard">
+      <div style="font-size:1.5rem;font-weight:900;margin-bottom:.15rem">Good morning, <span id="dbGreetName">Aarav</span>! ☀️</div>
+      <div class="muted" style="margin-bottom:1.1rem">Your personalized learning dashboard</div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#eef2ff"><i class="bi bi-graph-up-arrow" style="color:var(--pri)"></i></div>
+          <div class="stat-val" id="dbOverall">—</div>
+          <div class="stat-label">Overall Progress</div>
+          <div class="stat-sub muted" id="dbMastered">Topics Mastered: —</div>
+          <div style="margin-top:.5rem">
+            <div class="prog-bar-bg"><div class="prog-bar" id="dbProgBar" style="width:0%"></div></div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#dbeafe"><i class="bi bi-clipboard2-check-fill" style="color:#2563eb"></i></div>
+          <div class="stat-val" id="dbQuizzes">0</div>
+          <div class="stat-label">Total Quizzes</div>
+          <div class="stat-sub" style="color:var(--ok)" id="dbQuizSub">Take your first quiz!</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fff7ed"><i class="bi bi-fire" style="color:#ea580c"></i></div>
+          <div class="stat-val" id="dbStreak">0</div>
+          <div class="stat-label">Study Streak</div>
+          <div class="stat-sub muted" id="dbStreakSub">days</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#faf5ff"><i class="bi bi-calendar-event-fill" style="color:var(--purple)"></i></div>
+          <div class="stat-val" id="dbExamDate">—</div>
+          <div class="stat-label">Next Exam</div>
+          <div class="stat-sub muted" id="dbDaysLeft">Set in Settings</div>
+        </div>
+      </div>
+
+      <div class="layout-with-panel">
+        <div>
+          <!-- Coach -->
+          <div class="coach-card" style="margin-bottom:1rem">
+            <div class="coach-header">
+              <div class="coach-icon"><i class="bi bi-robot"></i></div>
+              <div>
+                <div style="font-weight:800;font-size:.95rem">AI Study Coach <span class="pill pill-pri" style="font-size:.6rem">Beta</span></div>
+                <div class="muted" style="font-size:.75rem">Your AI agent analyzes your performance and recommends the next best action.</div>
+              </div>
+            </div>
+            <div class="coach-action" id="dbCoachAction">
+              <div style="font-size:.7rem;font-weight:800;color:var(--pri);text-transform:uppercase;margin-bottom:.3rem">Next Recommended Action</div>
+              <div style="font-weight:700;font-size:.9rem" id="dbCoachTitle">Upload study material to begin</div>
+              <div class="muted mt1" style="font-size:.82rem" id="dbCoachReason">Upload a PDF to receive personalized recommendations.</div>
+              <button class="btn btn-pri btn-sm mt2" id="dbCoachBtn" onclick="coachAction()"><i class="bi bi-arrow-right-circle-fill"></i>View Plan</button>
+            </div>
+            <div style="font-size:.8rem;font-weight:700;margin-bottom:.4rem">Recommended Steps</div>
+            <div class="coach-steps" id="dbCoachSteps">
+              <div class="coach-step">Upload study material</div>
+              <div class="coach-step">Take a quiz</div>
+              <div class="coach-step">Review explanations</div>
+              <div class="coach-step">Update study plan (automatic)</div>
+            </div>
+          </div>
+
+          <!-- Quick actions -->
+          <div class="dash-grid" style="margin-bottom:1rem">
+            <div class="card" style="text-align:center;cursor:pointer" onclick="navTo('upload')">
+              <div style="width:44px;height:44px;background:#dbeafe;border-radius:11px;margin:0 auto .7rem;display:flex;align-items:center;justify-content:center;font-size:1.2rem"><i class="bi bi-file-earmark-pdf-fill" style="color:#2563eb"></i></div>
+              <div style="font-weight:700;font-size:.88rem">Upload PDF</div>
+              <div class="muted" style="font-size:.75rem;margin-top:.2rem">Upload study notes and get instant quizzes, summaries and flashcards.</div>
+              <button class="btn btn-out btn-sm btn-full mt2">Upload PDF</button>
+            </div>
+            <div class="card" style="text-align:center;cursor:pointer" onclick="navTo('quizzes')">
+              <div style="width:44px;height:44px;background:var(--ok-light);border-radius:11px;margin:0 auto .7rem;display:flex;align-items:center;justify-content:center;font-size:1.2rem"><i class="bi bi-patch-question-fill" style="color:var(--ok)"></i></div>
+              <div style="font-weight:700;font-size:.88rem">Create Quiz</div>
+              <div class="muted" style="font-size:.75rem;margin-top:.2rem">Generate MCQs with different difficulty levels from your notes.</div>
+              <button class="btn btn-ok btn-sm btn-full mt2">Create Quiz</button>
+            </div>
+          </div>
+
+          <!-- Study recommendations -->
+          <div class="card">
+            <div class="flex gap2" style="margin-bottom:.8rem">
+              <div style="font-weight:800;font-size:.9rem">Study Recommendations</div>
+            </div>
+            <div id="dbRecsContainer">
+              <div class="muted" style="font-size:.82rem">Take quizzes to get personalized study recommendations.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right panel -->
+        <div class="right-panel">
+          <!-- Topic mastery -->
+          <div class="card">
+            <div class="flex gap2" style="margin-bottom:.8rem">
+              <div style="font-weight:800;font-size:.9rem">Topic Mastery</div>
+              <span class="view-all" style="margin-left:auto" onclick="navTo('analytics')">View All</span>
+            </div>
+            <div class="donut-wrap">
+              <svg class="donut-svg" width="100" height="100" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="38" fill="none" stroke="#f0f0f0" stroke-width="14"/>
+                <circle cx="50" cy="50" r="38" fill="none" stroke="#22c55e" stroke-width="14" stroke-dasharray="239.4" stroke-dashoffset="239.4" id="donutStrong" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+                <circle cx="50" cy="50" r="38" fill="none" stroke="#3b82f6" stroke-width="14" stroke-dasharray="239.4" stroke-dashoffset="239.4" id="donutGood" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+                <circle cx="50" cy="50" r="38" fill="none" stroke="#f59e0b" stroke-width="14" stroke-dasharray="239.4" stroke-dashoffset="239.4" id="donutNeeds" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+                <circle cx="50" cy="50" r="38" fill="none" stroke="#ef4444" stroke-width="14" stroke-dasharray="239.4" stroke-dashoffset="239.4" id="donutWeak" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="800" fill="#1a1d2e" id="donutTotal">0</text>
+                <text x="50" y="58" text-anchor="middle" font-size="7" fill="#6b7280">Topics</text>
+              </svg>
+              <div class="donut-legend">
+                <div class="legend-row"><div class="legend-dot" style="background:#22c55e"></div>Strong <strong id="legStrong">0</strong></div>
+                <div class="legend-row"><div class="legend-dot" style="background:#3b82f6"></div>Good <strong id="legGood">0</strong></div>
+                <div class="legend-row"><div class="legend-dot" style="background:#f59e0b"></div>Needs Practice <strong id="legNeeds">0</strong></div>
+                <div class="legend-row"><div class="legend-dot" style="background:#ef4444"></div>Weak <strong id="legWeak">0</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent activity -->
+          <div class="card">
+            <div class="flex gap2" style="margin-bottom:.6rem">
+              <div style="font-weight:800;font-size:.9rem">Recent Activity</div>
+              <span class="view-all" style="margin-left:auto" onclick="navTo('analytics')">View All</span>
+            </div>
+            <div id="dbActivity">
+              <div class="muted" style="font-size:.82rem">No activity yet. Take your first quiz!</div>
+            </div>
+          </div>
+
+          <!-- Revision plan preview -->
+          <div class="card">
+            <div class="flex gap2" style="margin-bottom:.6rem">
+              <div style="font-weight:800;font-size:.9rem">Your Revision Plan</div>
+              <span class="view-all" style="margin-left:auto" onclick="navTo('revision')">View All</span>
+            </div>
+            <div id="dbRevPreview">
+              <div class="muted" style="font-size:.82rem">Set your exam date in Settings to generate a revision plan.</div>
+            </div>
+          </div>
+
+          <!-- Quick stats -->
+          <div class="card">
+            <div style="font-weight:800;font-size:.9rem;margin-bottom:.7rem">Quick Stats</div>
+            <div style="display:flex;gap:1rem;text-align:center">
+              <div style="flex:1"><div style="font-size:1.1rem;font-weight:900" id="qsAvg">—</div><div class="muted" style="font-size:.72rem">Avg. Score</div></div>
+              <div style="flex:1"><div style="font-size:1.1rem;font-weight:900" id="qsBest">—</div><div class="muted" style="font-size:.72rem">Best Score</div></div>
+              <div style="flex:1"><div style="font-size:1.1rem;font-weight:900" id="qsTime">—</div><div class="muted" style="font-size:.72rem">Total Study Time</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /dashboard -->
+
+    <!-- ═══ UPLOAD ═══ -->
+    <div class="section" id="s-upload">
+      <div class="page-title">Upload PDF</div>
+      <div class="page-sub">Upload your PDF notes to generate quizzes, flashcards and summaries.</div>
+      <div id="uploadAlert"></div>
+      <div class="dash-grid">
+        <div class="card">
+          <div style="font-weight:800;font-size:.95rem;margin-bottom:.9rem"><i class="bi bi-file-earmark-pdf-fill" style="color:#ef4444"></i> Upload PDF Notes</div>
+          <label class="drop-zone" id="pdfDrop" for="pdfInput">
+            <input type="file" id="pdfInput" accept=".pdf"/>
+            <i class="bi bi-cloud-upload-fill" style="font-size:2.2rem;color:var(--pri)"></i>
+            <div style="font-weight:700;margin-top:.4rem">Click or drag PDF here</div>
+            <div class="muted" style="font-size:.8rem;margin-top:.2rem">Max 16 MB · Text-based PDFs only</div>
+            <div id="pdfFileName" style="margin-top:.4rem;font-weight:700;color:var(--ok);font-size:.82rem"></div>
+          </label>
+          <button class="btn btn-pri btn-full mt2" id="pdfUpBtn" disabled onclick="doPdfUpload()">
+            <i class="bi bi-upload"></i>Upload & Analyze
+          </button>
+        </div>
+      </div>
+      <!-- Uploaded material info -->
+      <div class="card mt2" id="uploadedInfo" style="display:none">
+        <div style="font-weight:800;margin-bottom:.6rem">✅ Material Loaded</div>
+        <div class="flex gap2 flex-wrap" id="uploadedTopics"></div>
+        <div class="flex gap2 mt2">
+          <button class="btn btn-pri btn-sm" onclick="navTo('quizzes')"><i class="bi bi-patch-question-fill"></i>Create Quiz</button>
+          <button class="btn btn-ghost btn-sm" onclick="navTo('flashcards')"><i class="bi bi-card-text"></i>Flashcards</button>
+        </div>
+      </div>
+    </div><!-- /upload -->
+
+    <!-- ═══ QUIZZES ═══ -->
+    <div class="section" id="s-quizzes">
+      <div id="quizView-config">
+        <div class="page-title">Create Quiz</div>
+        <div class="page-sub">Configure and generate your practice quiz.</div>
+        <div id="quizAlert"></div>
+        <div class="card" style="max-width:560px">
+          <div style="font-weight:800;margin-bottom:.9rem">Quiz Settings</div>
+          <label style="font-size:.82rem;font-weight:700;display:block;margin-bottom:.3rem">Number of Questions</label>
+          <div class="flex gap2" style="margin-bottom:.9rem">
+            <input type="range" id="qNumQ" min="5" max="30" step="5" value="10" oninput="qNumQVal.textContent=this.value" style="flex:1;accent-color:var(--pri)"/>
+            <span style="font-size:1.2rem;font-weight:900;color:var(--pri);min-width:2rem;text-align:center" id="qNumQVal">10</span>
+          </div>
+          <label style="font-size:.82rem;font-weight:700;display:block;margin-bottom:.3rem">Questions per Topic</label>
+          <div class="flex gap2" style="margin-bottom:.9rem">
+            <input type="range" id="qQpt" min="1" max="6" step="1" value="3" oninput="qQptVal.textContent=this.value" style="flex:1;accent-color:var(--pri)"/>
+            <span style="font-size:1.2rem;font-weight:900;color:var(--pri);min-width:2rem;text-align:center" id="qQptVal">3</span>
+          </div>
+          <label style="font-size:.82rem;font-weight:700;display:block;margin-bottom:.3rem">Timer per Question</label>
+          <div class="flex gap2" style="margin-bottom:.7rem">
+            <input type="range" id="qTimer" min="10" max="90" step="5" value="30" oninput="qTimerVal.textContent=this.value+'s'" style="flex:1;accent-color:var(--pri)"/>
+            <span style="font-size:1.2rem;font-weight:900;color:var(--pri);min-width:3rem;text-align:center" id="qTimerVal">30s</span>
+          </div>
+          <div class="flex gap1 mt1" style="margin-bottom:.9rem">
+            <input type="checkbox" id="qTimerOn" checked style="accent-color:var(--pri)"/>
+            <label for="qTimerOn" style="font-size:.85rem;font-weight:600">Enable countdown timer</label>
+          </div>
+          <button class="btn btn-pri btn-full" id="genBtn" onclick="doGenerate()">
+            <i class="bi bi-lightning-fill"></i>Generate Quiz
+          </button>
+        </div>
+      </div>
+
+      <div id="quizView-quiz" style="display:none">
+        <div style="position:sticky;top:60px;z-index:80;background:var(--bg);padding:.5rem 0;border-bottom:1px solid var(--border);margin-bottom:.9rem">
+          <div class="flex gap2" style="margin-bottom:.3rem;font-size:.8rem;font-weight:700">
+            <span style="color:var(--pri)" id="qProgLabel">0 / 0</span>
+            <span style="color:var(--warn);margin-left:auto" id="qStreakLabel">🔥 0 streak</span>
+          </div>
+          <div class="prog-bar-bg"><div class="prog-bar" id="qProgFill"></div></div>
+        </div>
+        <div id="qContainer"></div>
+        <button class="btn btn-pri btn-full" style="max-width:400px" id="qSubBtn" disabled onclick="doSubmit()">
+          <i class="bi bi-check2-circle"></i>Submit Quiz
+        </button>
+        <p class="muted mt1" style="font-size:.8rem" id="qSubHint">Answer all questions to submit</p>
+      </div>
+
+      <div id="quizView-results" style="display:none">
+        <div class="score-hero">
+          <div style="font-size:2.5rem" id="rEmoji">🏆</div>
+          <div class="score-big" id="rBig">0/0</div>
+          <div class="score-pct" id="rPct">0%</div>
+          <div style="font-size:1.1rem;font-weight:700;margin-top:.3rem" id="rGrade"></div>
+          <div style="opacity:.7;font-size:.8rem;margin-top:.2rem" id="rPdf"></div>
+        </div>
+        <div class="dash-grid">
+          <div class="card">
+            <div class="card-title">Topic Performance</div>
+            <div id="rTopicBars"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Coach Recommendation</div>
+            <div id="rCoachTip" class="muted">Loading…</div>
+          </div>
+        </div>
+        <div class="card mt2">
+          <div class="card-title">Detailed Review</div>
+          <div id="rReview"></div>
+        </div>
+        <div class="flex gap2 mt2" style="flex-wrap:wrap">
+          <button class="btn btn-out btn-sm" onclick="retakeQuiz()"><i class="bi bi-arrow-repeat"></i>Retake</button>
+          <button class="btn btn-pri btn-sm" onclick="showQuizView('config')"><i class="bi bi-plus-circle"></i>New Quiz</button>
+          <button class="btn btn-ghost btn-sm" onclick="dlCSV()"><i class="bi bi-download"></i>Download CSV</button>
+        </div>
+      </div>
+    </div><!-- /quizzes -->
+
+    <!-- ═══ STUDY COACH ═══ -->
+    <div class="section" id="s-coach">
+      <div class="page-title">AI Study Coach</div>
+      <div class="page-sub">Your 7-stage AI agent analyses your performance and creates a personalised study plan.</div>
+      <div class="layout-with-panel">
+        <div>
+          <div class="card" style="border-left:4px solid var(--pri);margin-bottom:1rem">
+            <div style="font-weight:800;font-size:.9rem;margin-bottom:.6rem"><i class="bi bi-lightning-fill" style="color:var(--pri)"></i> Next Recommended Action</div>
+            <div id="coachActionBody"><div class="muted">Loading…</div></div>
+            <button class="btn btn-pri btn-sm mt2" id="coachDoBtn" onclick="coachAction()" style="display:none"><i class="bi bi-play-fill"></i>Start Recommended Quiz</button>
+          </div>
+          <div class="card" style="margin-bottom:1rem">
+            <div style="font-weight:800;font-size:.9rem;margin-bottom:.6rem"><i class="bi bi-lightbulb-fill" style="color:var(--warn)"></i> Performance Insights</div>
+            <div id="coachInsights"><div class="muted">No quiz history yet — take a quiz to get insights.</div></div>
+          </div>
+          <div class="card">
+            <div style="font-weight:800;font-size:.9rem;margin-bottom:.6rem"><i class="bi bi-list-check" style="color:var(--ok)"></i> Study Plan</div>
+            <div id="coachPlan"><div class="muted">Your study plan will appear after your first quiz.</div></div>
+          </div>
+        </div>
+        <div class="right-panel">
+          <div class="card">
+            <div style="font-weight:800;font-size:.9rem;margin-bottom:.7rem"><i class="bi bi-bullseye" style="color:var(--err)"></i> Set Exam Goal</div>
+            <label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:.25rem">Exam Date</label>
+            <input type="date" id="goalDate" style="width:100%;padding:.5rem .8rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:.85rem;margin-bottom:.6rem"/>
+            <label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:.25rem">Daily Study Hours</label>
+            <input type="number" id="goalHours" min="0.5" max="10" step="0.5" value="1.5" style="width:100%;padding:.5rem .8rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:.85rem;margin-bottom:.6rem"/>
+            <label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:.25rem">Goal Description</label>
+            <input type="text" id="goalText" placeholder="e.g. Pass Computer Networks" style="width:100%;padding:.5rem .8rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:.85rem;margin-bottom:.7rem"/>
+            <button class="btn btn-pri btn-full btn-sm" onclick="saveGoal()"><i class="bi bi-check2"></i>Save Goal</button>
+            <div id="goalMsg" class="muted mt1" style="font-size:.78rem"></div>
+          </div>
+          <div class="card">
+            <div style="font-weight:800;font-size:.9rem;margin-bottom:.6rem"><i class="bi bi-clock-history" style="color:var(--pri)"></i> Quiz History</div>
+            <div id="coachHistory"><div class="muted" style="font-size:.82rem">No attempts yet.</div></div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /coach -->
+
+    <!-- ═══ AI TUTOR ═══ -->
+    <div class="section" id="s-tutor">
+      <div class="page-title">AI Tutor</div>
+      <div class="page-sub">Ask anything about your uploaded notes.</div>
+      <div class="layout-with-panel">
+        <div class="card" style="display:flex;flex-direction:column;height:500px">
+          <div class="tutor-panel" id="tutorMessages">
+            <div class="msg msg-bot">
+              <div class="msg-avatar" style="background:var(--pri-light);color:var(--pri)"><i class="bi bi-robot"></i></div>
+              <div>
+                <div class="msg-bubble">Hi! I can help you with questions about your study material. Ask me anything, and I'll provide explanations from your uploaded notes.</div>
+              </div>
+            </div>
+          </div>
+          <hr class="divider"/>
+          <div class="tutor-input-row">
+            <input class="tutor-input" id="tutorQ" placeholder="Ask a question…" onkeydown="if(event.key==='Enter')askTutor()"/>
+            <button class="btn btn-pri btn-sm" onclick="askTutor()"><i class="bi bi-send-fill"></i></button>
+          </div>
+        </div>
+        <div class="right-panel">
+          <div class="card">
+            <div style="font-weight:700;font-size:.85rem;margin-bottom:.7rem">Quick Questions</div>
+            <div style="display:flex;flex-direction:column;gap:.5rem">
+              <button class="btn btn-ghost btn-sm" onclick="quickQ('Explain this concept in simple terms')">Explain this concept in simple terms</button>
+              <button class="btn btn-ghost btn-sm" onclick="quickQ('Give me an example')">Give me an example</button>
+              <button class="btn btn-ghost btn-sm" onclick="quickQ('Show me a follow-up quiz question')">Show me a follow-up quiz</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /tutor -->
+
+    <!-- ═══ FLASHCARDS ═══ -->
+    <div class="section" id="s-flashcards">
+      <div class="page-title">Flashcards</div>
+      <div class="page-sub">Click a card to flip it and reveal the answer.</div>
+      <div class="flex gap2" style="margin-bottom:1rem">
+        <button class="btn btn-pri btn-sm" onclick="loadFlashcards()"><i class="bi bi-arrow-clockwise"></i>Generate Flashcards</button>
+        <span class="muted" style="font-size:.8rem;line-height:1;align-self:center" id="fcCount"></span>
+      </div>
+      <div class="fc-grid" id="fcGrid"><div class="empty-state"><i class="bi bi-card-text"></i>Upload a PDF and click Generate Flashcards.</div></div>
+    </div><!-- /flashcards -->
+
+    <!-- ═══ REVISION ═══ -->
+    <div class="section" id="s-revision">
+      <div class="page-title">Revision Plan</div>
+      <div class="page-sub">SM-2 spaced repetition — topics scheduled based on your quiz performance.</div>
+      <div class="dash-grid three" style="margin-bottom:1rem">
+        <div class="stat-card" style="text-align:center"><div class="stat-val" style="color:var(--err)" id="revOverdueN">0</div><div class="muted">Overdue</div></div>
+        <div class="stat-card" style="text-align:center"><div class="stat-val" style="color:var(--warn)" id="revTodayN">0</div><div class="muted">Due Today</div></div>
+        <div class="stat-card" style="text-align:center"><div class="stat-val" style="color:var(--pri)" id="revUpcomingN">0</div><div class="muted">Upcoming</div></div>
+      </div>
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-title">Overdue</div><div id="revOverdue"><div class="muted">None ✅</div></div>
+      </div>
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-title">Due Today</div><div id="revToday"><div class="muted">Nothing due today.</div></div>
+      </div>
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-title">Upcoming</div><div id="revUpcoming"><div class="muted">No upcoming tasks.</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Completed</div><div id="revDone"><div class="muted">No completed tasks yet.</div></div>
+      </div>
+    </div><!-- /revision -->
+
+    <!-- ═══ ANALYTICS ═══ -->
+    <div class="section" id="s-analytics">
+      <div class="page-title">Progress & Analytics</div>
+      <div class="page-sub">Your full learning history and topic mastery breakdown.</div>
+      <div class="dash-grid">
+        <div class="card">
+          <div class="card-title">Topic Mastery</div>
+          <div id="analyticsTopics"><div class="muted">Take quizzes to see topic mastery.</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Quiz History</div>
+          <div id="analyticsHistory"><div class="muted">No quiz history yet.</div></div>
+        </div>
+      </div>
+    </div><!-- /analytics -->
+
+    <!-- ═══ FILES ═══ -->
+    <div class="section" id="s-files">
+      <div class="page-title">My Files</div>
+      <div class="page-sub">All uploaded PDFs this session.</div>
+      <div id="filesContainer"><div class="empty-state"><i class="bi bi-folder"></i>No files uploaded yet.</div></div>
+    </div><!-- /files -->
+
+    <!-- ═══ SETTINGS ═══ -->
+    <div class="section" id="s-settings">
+      <div class="page-title">Settings</div>
+      <div class="page-sub">Manage your profile and exam goals.</div>
+      <div class="card" style="max-width:480px">
+        <div style="font-weight:800;margin-bottom:.9rem">Profile</div>
+        <label style="font-size:.82rem;font-weight:700;display:block;margin-bottom:.25rem">Display Name</label>
+        <input type="text" id="settingsName" placeholder="Your name" style="width:100%;padding:.55rem .9rem;border:1.5px solid var(--border);border-radius:8px;font-size:.88rem;background:var(--bg);color:var(--text);margin-bottom:.8rem"/>
+        <div style="font-weight:800;margin-bottom:.7rem">Exam Goal</div>
+        <label style="font-size:.82rem;font-weight:700;display:block;margin-bottom:.25rem">Exam Date</label>
+        <input type="date" id="settingsExam" style="width:100%;padding:.55rem .9rem;border:1.5px solid var(--border);border-radius:8px;font-size:.88rem;background:var(--bg);color:var(--text);margin-bottom:.6rem"/>
+        <label style="font-size:.82rem;font-weight:700;display:block;margin-bottom:.25rem">Daily Study Hours</label>
+        <input type="number" id="settingsHours" min="0.5" max="12" step="0.5" value="1.5" style="width:100%;padding:.55rem .9rem;border:1.5px solid var(--border);border-radius:8px;font-size:.88rem;background:var(--bg);color:var(--text);margin-bottom:.6rem"/>
+        <label style="font-size:.82rem;font-weight:700;display:block;margin-bottom:.25rem">Goal</label>
+        <input type="text" id="settingsGoal" placeholder="e.g. Pass Computer Networks final" style="width:100%;padding:.55rem .9rem;border:1.5px solid var(--border);border-radius:8px;font-size:.88rem;background:var(--bg);color:var(--text);margin-bottom:.9rem"/>
+        <button class="btn btn-pri" onclick="saveSettings()"><i class="bi bi-check2"></i>Save Settings</button>
+        <div id="settingsMsg" class="muted mt1" style="font-size:.78rem"></div>
+      </div>
+    </div><!-- /settings -->
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+// ══ STATE ══════════════════════════════════════════════════════════════════════
+let Qs=[], ans={}, tTaken={}, timers={}, tStart={};
+let timerOn=true, timerSecs=30, curStreak=0, lastData=null;
+
+// ══ NAVIGATION ═════════════════════════════════════════════════════════════════
+function navTo(name){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const s=document.getElementById('s-'+name);
+  if(s)s.classList.add('active');
+  const n=document.querySelector(`[data-section="${name}"]`);
+  if(n)n.classList.add('active');
+  window.scrollTo(0,0);
+  // Lazy-load section data
+  if(name==='dashboard')     loadDashboard();
+  else if(name==='coach')    loadCoach();
+  else if(name==='revision') loadRevision();
+  else if(name==='analytics')loadAnalytics();
+  else if(name==='files')    loadFiles();
+}
+document.querySelectorAll('.nav-item').forEach(n=>
+  n.addEventListener('click',()=>navTo(n.dataset.section))
+);
+
+// ══ DASHBOARD ══════════════════════════════════════════════════════════════════
+async function loadDashboard(){
+  try{
+    const r=await fetch('/api/dashboard');
+    const d=await r.json();
+    if(!d.success)return;
+
+    // Stats
+    dbOverall.textContent   = d.overall+'%';
+    dbProgBar.style.width   = d.overall+'%';
+    dbMastered.textContent  = `Topics Mastered: ${d.topics_mastered} / ${d.topics_total}`;
+    dbQuizzes.textContent   = d.total_quizzes;
+    dbStreak.textContent    = d.streak;
+    dbStreakSub.textContent = d.streak===1?'day':'days';
+    dbQuizSub.textContent   = d.total_quizzes>0?`+${d.total_quizzes} this session`:'Take your first quiz!';
+    dbExamDate.textContent  = d.exam_date||'Not set';
+    dbDaysLeft.textContent  = d.days_left!=null?`in ${d.days_left} days`:'Set in Settings';
+
+    // Donut
+    const m=d.mastery, total=m.strong+m.good+m.needs+m.weak||1;
+    const circ=239.4;
+    function setDonut(id,pct,offset){
+      const el=document.getElementById(id);
+      el.style.strokeDashoffset=circ-(circ*pct/100);
+      el.style.strokeDasharray=`${circ*pct/100} ${circ*(1-pct/100)}`;
+    }
+    // Simple stacked approach
+    legStrong.textContent=m.strong; legGood.textContent=m.good;
+    legNeeds.textContent=m.needs;   legWeak.textContent=m.weak;
+    donutTotal.textContent=total;
+    // Animate donut
+    const perc=t=>Math.round(t/total*100);
+    const animate=(elId,p)=>{
+      const el=document.getElementById(elId);
+      setTimeout(()=>{el.style.strokeDashoffset=circ*(1-p/100);},100);
+    };
+    animate('donutStrong',perc(m.strong));
+    animate('donutGood',  perc(m.good+m.strong));
+    animate('donutNeeds', perc(m.needs+m.good+m.strong));
+    animate('donutWeak',  100);
+
+    // Quick stats
+    if(d.topic_history.length){
+      const avgs=d.topic_history.map(t=>t.avg_pct);
+      qsAvg.textContent = Math.round(avgs.reduce((a,b)=>a+b,0)/avgs.length)+'%';
+      qsBest.textContent= Math.max(...avgs)+'%';
+      qsTime.textContent= (d.total_quizzes*8)+'m';
+    }
+
+    // Activity
+    if(d.recent.length){
+      dbActivity.innerHTML=d.recent.map(a=>`
+        <div class="activity-row">
+          <div class="act-icon" style="background:var(--pri-light)"><i class="bi bi-patch-question-fill" style="color:var(--pri)"></i></div>
+          <div><div class="act-title">${a.title}</div><div class="act-detail">${a.detail}</div></div>
+          <div class="act-time">${a.time}</div>
+          <span class="act-tag ${a.tag_cls}">${a.tag}</span>
+        </div>`).join('');
+    }
+
+    // Revision preview
+    const revR=await fetch('/api/revision');
+    const revD=await revR.json();
+    if(revD.success){
+      const tasks=[...revD.schedule.overdue,...revD.schedule.due_today,...revD.schedule.upcoming].slice(0,5);
+      if(tasks.length){
+        dbRevPreview.innerHTML=tasks.map(t=>`
+          <div class="rev-row">
+            <div class="rev-checkbox ${t.status==='done'?'done':''}" onclick="markRevDone(${t.id},this)">
+              ${t.status==='done'?'<i class="bi bi-check2" style="font-size:.7rem"></i>':''}
+            </div>
+            <div class="rev-topic">${t.topic}</div>
+            <div class="rev-due">${t.due_date}</div>
+            <span class="rev-status ${t.due_date<today()?'s-overdue':t.due_date===today()?'s-pending':'s-pending'}">
+              ${t.due_date<today()?'Overdue':t.due_date===today()?'Today':'Pending'}
+            </span>
+          </div>`).join('');
+      }
+    }
+
+    // Coach tip
+    const cr=await fetch('/api/coach');
+    const cd=await cr.json();
+    if(cd.success && cd.action){
+      const a=cd.action;
+      dbCoachTitle.textContent = a.topic?`Focus on ${a.topic}`:'Review your study plan';
+      dbCoachReason.innerHTML  = a.reason||'';
+      if(a.action==='quiz') dbCoachBtn.innerHTML='<i class="bi bi-lightning-fill"></i>Start Targeted Quiz';
+    }
+
+    // Recommendations
+    const recR=await fetch('/api/recommendations');
+    const recD=await recR.json();
+    if(recD.success && recD.recommendations.length){
+      dbRecsContainer.innerHTML=recD.recommendations.slice(0,3).map(r=>`
+        <div style="display:flex;align-items:center;gap:.7rem;padding:.5rem 0;border-bottom:1px solid var(--border)">
+          <div style="width:52px;height:38px;background:var(--pri-light);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i class="bi bi-journal-text" style="color:var(--pri)"></i>
+          </div>
+          <div style="flex:1">
+            <div style="font-size:.83rem;font-weight:700">${r.topic}</div>
+            <div class="muted" style="font-size:.73rem">${r.reason}</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="navTo('quizzes')">${r.label}</button>
+        </div>`).join('');
+    }
+
+  }catch(e){console.error(e);}
+}
+
+function today(){return new Date().toISOString().split('T')[0];}
+
+function coachAction(){
+  if(lastData){navTo('quizzes');showQuizView('config');}
+  else navTo('quizzes');
+}
+
+// ══ UPLOAD ═════════════════════════════════════════════════════════════════════
+
+const pdfInput=document.getElementById('pdfInput');
+pdfInput.onchange=()=>{
+  if(pdfInput.files.length){pdfFileName.textContent='✓ '+pdfInput.files[0].name;pdfUpBtn.disabled=false;}
+};
+pdfDrop.addEventListener('dragover',e=>{e.preventDefault();pdfDrop.classList.add('over')});
+pdfDrop.addEventListener('dragleave',()=>pdfDrop.classList.remove('over'));
+pdfDrop.addEventListener('drop',e=>{
+  e.preventDefault();pdfDrop.classList.remove('over');
+  const f=e.dataTransfer.files[0];
+  if(f&&f.name.endsWith('.pdf')){
+    const dt=new DataTransfer();dt.items.add(f);pdfInput.files=dt.files;
+    pdfFileName.textContent='✓ '+f.name;pdfUpBtn.disabled=false;
+  }
+});
+
+async function doPdfUpload(){
+  pdfUpBtn.disabled=true;
+  pdfUpBtn.innerHTML='<span class="spin"></span>Analyzing…';
+  uploadAlert.innerHTML='';
+  const fd=new FormData();fd.append('pdf',pdfInput.files[0]);
+  try{
+    const r=await fetch('/api/upload',{method:'POST',body:fd});
+    const d=await r.json();
+    if(!d.success){uploadAlert.innerHTML=`<div class="alert-box alert-err">⚠ ${d.error}</div>`;pdfUpBtn.disabled=false;pdfUpBtn.innerHTML='<i class="bi bi-upload"></i>Upload & Analyze';return;}
+    showUploadedInfo(d);
+  }catch{uploadAlert.innerHTML='<div class="alert-box alert-err">Network error.</div>';}
+  pdfUpBtn.disabled=false;pdfUpBtn.innerHTML='<i class="bi bi-upload"></i>Upload & Analyze';
+}
+
+function showUploadedInfo(d){
+  uploadedInfo.style.display='block';
+  uploadAlert.innerHTML=`<div class="alert-box alert-ok">✅ ${d.pdf_name} loaded — ${d.char_count.toLocaleString()} chars, ${d.topics.length} topics detected.</div>`;
+  uploadedTopics.innerHTML=d.topics.map(t=>`<span class="pill pill-pri">${t}</span>`).join('');
+}
+
+// ══ GENERATE QUIZ ═══════════════════════════════════════════════════════════
+async function doGenerate(){
+  genBtn.disabled=true;
+  genBtn.innerHTML='<span class="spin"></span>Generating…';
+  quizAlert.innerHTML='';
+  timerOn=qTimerOn.checked; timerSecs=+qTimer.value;
+  try{
+    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({num_questions:+qNumQ.value,questions_per_topic:+qQpt.value})});
+    const d=await r.json();
+    if(!d.success){quizAlert.innerHTML=`<div class="alert-box alert-err">⚠ ${d.error}</div>`;genBtn.disabled=false;genBtn.innerHTML='<i class="bi bi-lightning-fill"></i>Generate Quiz';return;}
+    Qs=d.questions;ans={};tTaken={};timers={};tStart={};curStreak=0;
+    buildQuiz();showQuizView('quiz');
+  }catch{quizAlert.innerHTML='<div class="alert-box alert-err">Network error.</div>';}
+  genBtn.disabled=false;genBtn.innerHTML='<i class="bi bi-lightning-fill"></i>Generate Quiz';
+}
+
+function showQuizView(v){
+  ['config','quiz','results'].forEach(x=>document.getElementById('quizView-'+x).style.display='none');
+  document.getElementById('quizView-'+v).style.display='block';
+}
+
+// ══ BUILD QUIZ ═══════════════════════════════════════════════════════════════
+function buildQuiz(){
+  qContainer.innerHTML='';
+  Qs.forEach((q,i)=>{
+    const opts=Object.entries(q.options).map(([l,t])=>
+      `<div class="quiz-opt" id="o${i}_${l}" onclick="pick(${i},'${l}')">
+        <span class="opt-lbl">${l}</span>${t}
+       </div>`).join('');
+    const hb=q.source?`<button class="hint-btn" onclick="toggleHint(${i})">💡 Hint</button>`:'';
+    const tb=timerOn?`<span class="timer-badge" id="tm${i}">${timerSecs}s</span>`:'';
+    const hd=q.source?`<div class="hint-box" id="h${i}"><i class="bi bi-lightbulb-fill"></i> <strong>Hint:</strong> ${q.source.substring(0,180)}…</div>`:'';
+    const div=document.createElement('div');
+    div.className='quiz-q';div.id='qc'+i;
+    div.innerHTML=`<div class="quiz-meta">
+      <span>Q${i+1}/${Qs.length} · <span class="pill pill-pri" style="font-size:.65rem">${q.topic}</span></span>
+      <span style="display:flex;gap:.4rem;align-items:center">${hb}${tb}</span></div>
+      <div class="quiz-text">${q.question}</div>
+      <div class="quiz-opts">${opts}</div>${hd}`;
+    qContainer.appendChild(div);
+    if(timerOn)startTimer(i);
+  });
+  qProgLabel.textContent=`0 / ${Qs.length}`;
+  qSubBtn.disabled=true;
+}
+
+function toggleHint(i){const h=document.getElementById('h'+i);if(h)h.style.display=h.style.display==='block'?'none':'block';}
+
+function startTimer(i){
+  let rem=timerSecs;tStart[i]=Date.now();
+  timers[i]=setInterval(()=>{
+    rem--;
+    const el=document.getElementById('tm'+i);
+    if(!el){clearInterval(timers[i]);return;}
+    el.textContent=rem+'s';
+    el.className='timer-badge'+(rem<=5?' hot':rem<=10?' warn':'');
+    if(rem<=0){clearInterval(timers[i]);el.textContent='⏰';if(ans[i]===undefined){tTaken[i]=timerSecs;mark(i,null);}}
+  },1000);
+}
+function stopTimer(i){clearInterval(timers[i]);const el=document.getElementById('tm'+i);if(el)el.style.opacity='.4';}
+
+function pick(i,l){
+  if(ans[i]!==undefined)return;
+  tTaken[i]=tStart[i]?Math.round((Date.now()-tStart[i])/1000):0;
+  stopTimer(i);ans[i]=l;mark(i,l);
+}
+function mark(i,l){
+  ['A','B','C','D'].forEach(x=>{const e=document.getElementById('o'+i+'_'+x);if(e)e.classList.remove('sel');});
+  if(l){const e=document.getElementById('o'+i+'_'+l);if(e)e.classList.add('sel');}
+  document.getElementById('qc'+i)?.classList.add('done');
+  const done=Object.keys(ans).length;
+  qProgFill.style.width=Math.round(done/Qs.length*100)+'%';
+  qProgLabel.textContent=`${done} / ${Qs.length}`;
+  if(done>=Qs.length){
+    qSubBtn.disabled=false;qSubBtn.innerHTML='<i class="bi bi-check2-circle"></i>Submit Quiz ✓';
+    qSubBtn.style.background='var(--ok)';qSubHint.textContent='✓ All answered — ready!';
+  }
+}
+
+// ══ SUBMIT ════════════════════════════════════════════════════════════════════
+async function doSubmit(){
+  qSubBtn.disabled=true;qSubBtn.innerHTML='<span class="spin"></span>Submitting…';
+  Qs.forEach((_,i)=>{if(ans[i]===undefined)ans[i]='';});
+  try{
+    const r=await fetch('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({answers:ans,time_taken:tTaken})});
+    const d=await r.json();
+    if(!d.success){alert(d.error||'Error');return;}
+    lastData=d;renderResults(d);showQuizView('results');
+  }catch{alert('Network error');}
+  qSubBtn.disabled=false;qSubBtn.innerHTML='<i class="bi bi-check2-circle"></i>Submit Quiz';
+}
+
+function renderResults(d){
+  const p=d.score_pct;
+  rEmoji.textContent=p>=80?'🏆':p>=60?'👍':p>=40?'📖':'💪';
+  rBig.textContent=`${d.correct}/${d.total}`;
+  rGrade.textContent=p>=80?'Excellent!':p>=60?'Good Job!':p>=40?'Keep Practicing':'Needs Improvement';
+  rPdf.textContent=d.pdf_name||'';
+  countUp('rPct',0,p,'%',800);
+
+  rTopicBars.innerHTML=d.topic_chart.map(t=>`
+    <div class="analytics-bar">
+      <div class="label">${t.topic}</div>
+      <div class="bar-track"><div class="bar-fill" style="background:${t.pct>=60?'var(--ok)':'var(--err)'};width:${t.pct}%"></div></div>
+      <div class="pct">${t.pct}%</div>
+    </div>`).join('');
+
+  if(d.coach&&d.coach.action){
+    const a=d.coach.action;
+    rCoachTip.innerHTML=`<div style="font-weight:700;font-size:.88rem;margin-bottom:.4rem">${a.topic||'General'}</div>
+      <div class="muted" style="font-size:.82rem">${a.reason||''}</div>`;
+  }else rCoachTip.textContent='';
+
+  rReview.innerHTML=d.detailed.map(x=>`
+    <div style="border-left:3px solid ${x.is_correct?'var(--ok)':'var(--err)'};padding:.6rem .9rem;margin-bottom:.5rem;background:var(--bg);border-radius:0 8px 8px 0">
+      <div style="font-size:.82rem;font-weight:700">${x.is_correct?'✅':'❌'} Q${x.index}: ${x.question.substring(0,90)}…</div>
+      <div class="muted" style="font-size:.75rem">${x.is_correct?'Correct':'Your: '+x.user_ans+' · Correct: '+x.correct_ans}</div>
+    </div>`).join('');
+}
+
+function retakeQuiz(){ans={};tTaken={};timers={};tStart={};curStreak=0;buildQuiz();showQuizView('quiz');}
+
+// ══ STUDY COACH ══════════════════════════════════════════════════════════════
+let coachData=null;
+async function loadCoach(){
+  coachActionBody.innerHTML='<div class="muted">Loading…</div>';
+  try{
+    const r=await fetch('/api/coach');
+    const d=await r.json();
+    if(!d.success)return;
+    coachData=d;renderCoach(d);
+  }catch{coachActionBody.innerHTML='<div class="muted">Could not load.</div>';}
+}
+
+function renderCoach(d){
+  const a=d.action||{};
+  coachActionBody.innerHTML=`
+    <div style="font-size:.88rem;line-height:1.6">${a.reason||'No recommendation yet.'}</div>
+    ${a.topic?`<div class="mt1"><span class="pill pill-pri">${a.topic}</span></div>`:''}`;
+  coachDoBtn.style.display=a.action==='quiz'?'inline-flex':'none';
+
+  coachInsights.innerHTML=(d.insights||[]).length
+    ? d.insights.map(i=>`<div style="padding:.4rem 0;border-bottom:1px solid var(--border);font-size:.83rem">${i}</div>`).join('')
+    : '<div class="muted">Take a quiz to get insights.</div>';
+
+  const plan=d.plan||[];
+  const prioColor={high:'var(--err)',medium:'var(--warn)',low:'var(--ok)'};
+  coachPlan.innerHTML=plan.length
+    ? plan.map(p=>`
+        <div style="display:flex;align-items:center;gap:.6rem;padding:.5rem 0;border-bottom:1px solid var(--border)">
+          <div style="width:4px;height:36px;border-radius:4px;background:${prioColor[p.priority]||'var(--pri)'}"></div>
+          <div style="flex:1"><div style="font-weight:700;font-size:.84rem">${p.topic}</div>
+            <div class="muted" style="font-size:.75rem">${p.reason}</div></div>
+          <div style="font-size:.75rem;color:var(--muted)">Due: ${p.due}</div>
+        </div>`).join('')
+    : '<div class="muted">Plan will appear after your first quiz.</div>';
+
+  const hist=d.history||{};
+  coachHistory.innerHTML=`
+    <div style="display:flex;gap:1.2rem;flex-wrap:wrap;font-size:.83rem">
+      <div><strong>${hist.attempts||0}</strong> attempts</div>
+      <div><strong>${hist.topic_count||0}</strong> topics tracked</div>
+      <div><strong>${hist.due_today||0}</strong> due today</div>
+    </div>`;
+
+  const g=d.goal;
+  if(g){if(g.exam_date)goalDate.value=g.exam_date;if(g.goal_text)goalText.value=g.goal_text;if(g.daily_hours)goalHours.value=g.daily_hours;}
+}
+
+async function saveGoal(){
+  const p={exam_date:goalDate.value||null,daily_hours:+goalHours.value||1.5,goal_text:goalText.value.trim()};
+  try{
+    const r=await fetch('/api/goal',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
+    const d=await r.json();
+    if(d.success){goalMsg.textContent='✅ Saved!';setTimeout(()=>goalMsg.textContent='',3000);loadCoach();}
+  }catch{goalMsg.textContent='Failed.';}
+}
+
+// ══ AI TUTOR ══════════════════════════════════════════════════════════════════
+function addMsg(text,isUser){
+  const m=document.createElement('div');
+  m.className='msg '+(isUser?'msg-user':'msg-bot');
+  if(isUser){
+    m.innerHTML=`<div class="msg-bubble" style="margin-left:auto">${text}</div>`;
+  }else{
+    m.innerHTML=`<div class="msg-avatar" style="background:var(--pri-light);color:var(--pri)"><i class="bi bi-robot"></i></div>
+      <div><div class="msg-bubble">${text}</div></div>`;
+  }
+  tutorMessages.appendChild(m);
+  tutorMessages.scrollTop=tutorMessages.scrollHeight;
+}
+
+async function askTutor(){
+  const q=tutorQ.value.trim();if(!q)return;
+  addMsg(q,true);tutorQ.value='';
+  addMsg('<span class="spin" style="display:inline-block"></span> Thinking…',false);
+  try{
+    const r=await fetch('/api/tutor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q})});
+    const d=await r.json();
+    tutorMessages.lastChild.remove();
+    const src=d.source?`<div class="source-cite">📌 Source: ${d.source}</div>`:'';
+    const fq=d.follow_up?`<div style="margin-top:.5rem;font-size:.78rem;color:var(--pri)">💡 ${d.follow_up}</div>`:'';
+    addMsg((d.answer||d.error||'No answer found.').replace(/\n/g,'<br>')+src+fq,false);
+  }catch{tutorMessages.lastChild.remove();addMsg('Network error.',false);}
+}
+
+function quickQ(q){tutorQ.value=q;askTutor();}
+
+// ══ FLASHCARDS ════════════════════════════════════════════════════════════════
+async function loadFlashcards(){
+  fcGrid.innerHTML='<div class="muted">Loading…</div>';
+  const r=await fetch('/api/flashcards');
+  const d=await r.json();
+  if(!d.success||!d.flashcards.length){fcGrid.innerHTML='<div class="empty-state"><i class="bi bi-card-text"></i>Upload a PDF first.</div>';return;}
+  fcCount.textContent=d.flashcards.length+' cards';
+  fcGrid.innerHTML=d.flashcards.map((c,i)=>`
+    <div class="flashcard" id="fc${i}" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner">
+        <div class="fc-front">
+          <div style="font-size:.68rem;font-weight:700;color:var(--pri);margin-bottom:.4rem">${c.topic}</div>
+          <div>${c.front}</div>
+        </div>
+        <div class="fc-back"><div>${c.back}</div></div>
+      </div>
+    </div>`).join('');
+}
+
+// ══ REVISION ══════════════════════════════════════════════════════════════════
+async function loadRevision(){
+  const r=await fetch('/api/revision');
+  const d=await r.json();
+  if(d.success)renderRevision(d.schedule);
+}
+function renderRevision(s){
+  revOverdueN.textContent=s.overdue.length;
+  revTodayN.textContent  =s.due_today.length;
+  revUpcomingN.textContent=s.upcoming.length;
+  const tHTML=(tasks,done)=>tasks.length
+    ?tasks.map(t=>`
+      <div class="rev-row">
+        <div class="rev-checkbox ${done?'done':''}" onclick="${done?'':('markRevDone('+t.id+',this)')}">
+          ${done?'<i class="bi bi-check2" style="font-size:.7rem"></i>':''}
+        </div>
+        <div class="rev-topic">${t.topic}</div>
+        <div class="rev-due">${t.due_date} · ${t.interval_days}d</div>
+        ${done?'<span class="rev-status s-done">Done</span>':'<span class="rev-status s-pending">Pending</span>'}
+      </div>`).join('')
+    :null;
+  revOverdue.innerHTML  =tHTML(s.overdue,false) ||'<div class="muted">None ✅</div>';
+  revToday.innerHTML    =tHTML(s.due_today,false)||'<div class="muted">Nothing due today.</div>';
+  revUpcoming.innerHTML =tHTML(s.upcoming,false) ||'<div class="muted">No upcoming tasks.</div>';
+  revDone.innerHTML     =tHTML(s.completed,true) ||'<div class="muted">No completed tasks yet.</div>';
+}
+async function markRevDone(id,el){
+  el.classList.add('done');el.innerHTML='<i class="bi bi-check2" style="font-size:.7rem"></i>';
+  const r=await fetch('/api/revision/complete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({task_id:id})});
+  const d=await r.json();if(d.success)renderRevision(d.schedule);
+}
+
+// ══ ANALYTICS ════════════════════════════════════════════════════════════════
+async function loadAnalytics(){
+  const r=await fetch('/api/history');
+  const d=await r.json();
+  if(!d.success)return;
+  analyticsTopics.innerHTML=d.topic_history.length
+    ?d.topic_history.map(t=>`
+      <div class="analytics-bar">
+        <div class="label">${t.topic}</div>
+        <div class="bar-track"><div class="bar-fill" style="background:${t.avg_pct>=60?'var(--ok)':'var(--err)'};width:${t.avg_pct}%"></div></div>
+        <div class="pct">${t.avg_pct}%</div>
+      </div>`).join('')
+    :'<div class="muted">No topic data yet.</div>';
+  analyticsHistory.innerHTML=d.attempts.length
+    ?d.attempts.slice(0,10).map(a=>`
+      <div style="display:flex;justify-content:space-between;padding:.45rem 0;border-bottom:1px solid var(--border);font-size:.82rem">
+        <div>${a.pdf_name||'Quiz'}</div>
+        <div class="flex gap1">
+          <span style="font-weight:700">${a.score_pct}%</span>
+          <span class="muted">${a.attempted_at?.split('T')[0]||''}</span>
+        </div>
+      </div>`).join('')
+    :'<div class="muted">No quiz history yet.</div>';
+}
+
+// ══ FILES ═════════════════════════════════════════════════════════════════════
+async function loadFiles(){
+  const r=await fetch('/api/files');
+  const d=await r.json();
+  if(!d.success||!d.files.length){filesContainer.innerHTML='<div class="empty-state"><i class="bi bi-folder"></i>No files uploaded yet.</div>';return;}
+  filesContainer.innerHTML=d.files.map(f=>`
+    <div style="display:flex;align-items:center;gap:.9rem;padding:.7rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:.6rem">
+      <div style="width:38px;height:38px;background:${f.type==='pdf'?'#fee2e2':'var(--purple-light)'};border-radius:9px;display:flex;align-items:center;justify-content:center">
+        <i class="bi bi-${f.type==='pdf'?'file-earmark-pdf-fill':'play-circle-fill'}" style="color:${f.type==='pdf'?'var(--err)':'var(--purple)'}"></i>
+      </div>
+      <div style="flex:1"><div style="font-weight:700;font-size:.88rem">${f.name}</div>
+        <div class="muted" style="font-size:.75rem">${f.topics} topics · ${f.date}</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="navTo('quizzes')">Quiz</button>
+    </div>`).join('');
+}
+
+// ══ SETTINGS ══════════════════════════════════════════════════════════════════
+async function saveSettings(){
+  const name=settingsName.value.trim();
+  if(name){userName.textContent=name;userAvatar.textContent=name[0].toUpperCase();dbGreetName.textContent=name;}
+  const p={exam_date:settingsExam.value||null,daily_hours:+settingsHours.value||1.5,goal_text:settingsGoal.value.trim()};
+  try{
+    const r=await fetch('/api/goal',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
+    const d=await r.json();
+    settingsMsg.textContent=d.success?'✅ Settings saved!':'Failed.';
+    setTimeout(()=>settingsMsg.textContent='',3000);
+  }catch{settingsMsg.textContent='Network error.';}
+}
+
+// ══ UTILS ══════════════════════════════════════════════════════════════════════
+function countUp(id,from,to,sfx,ms){
+  const el=document.getElementById(id),s=performance.now();
+  (function f(n){const p=Math.min((n-s)/ms,1);el.textContent=Math.round(from+(to-from)*p)+sfx;if(p<1)requestAnimationFrame(f);})(s);
+}
+function dlCSV(){
+  if(!lastData)return;
+  const rows=[['Q#','Topic','Question','Your Answer','Correct Answer','Result','Time(s)']];
+  lastData.detailed.forEach((x,i)=>{
+    rows.push([x.index,x.topic,x.question,
+      x.user_ans?(x.user_ans+'. '+(x.options[x.user_ans]||'')):'Skipped',
+      x.correct_ans+'. '+(x.options[x.correct_ans]||x.answer_text),
+      x.is_correct?'Correct':'Wrong',tTaken[i]||0]);
+  });
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='results.csv';a.click();
+}
+
+// ══ INIT ══════════════════════════════════════════════════════════════════════
+loadDashboard();
+</script>
+</body>
+</html>
