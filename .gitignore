@@ -1,0 +1,10 @@
+.conda/
+.nltk_data/
+__pycache__/
+*.py[cod]
+.env
+.vscode/
+*.code-workspace
+studyquiz.db*
+flask_sessions/
+uploads/
